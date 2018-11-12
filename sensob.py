@@ -70,11 +70,5 @@ class ColorSensob(Sensob):
 
 
 class ProximitySensob(Sensob):
-    def __init__(self, distance):
+    def __init__(self):
         super(ProximitySensob, self).__init__(Ultrasonic())
-        self.distance = distance
-
-    def get_value(self):
-        if self.sensor.get_value() <= self.distance:
-            return True
-        return False
