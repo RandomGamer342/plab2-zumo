@@ -13,6 +13,13 @@ from zumo_button import ZumoButton
 ## BE SURE TO RUN THESE DEMOS ON THE FLOOR or to have plenty of people guarding
 ## #  the edges of a table if it is run there.
 
+# Circle around in the same location to measure traverse
+def turn():
+    ZumoButton().wait_for_press()
+    m = Motors()
+    m.left(speed=0.4, dur=10)
+
+
 # This just moves the robot around in a fixed dance pattern.  It uses no sensors.
 
 def dancer():
