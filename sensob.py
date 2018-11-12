@@ -1,6 +1,7 @@
 from reflectance_sensors import ReflectanceSensors
 from camera import Camera
 from imager2 import Imager
+from ultrasonic import Ultrasonic
 
 
 class Sensob:
@@ -66,3 +67,14 @@ class ColorSensob(Sensob):
                     matches += 1
         percentile = matches / (imager.xmax * imager.ymax)  # Normalize
         return percentile
+
+
+class ProximitySensob(Sensob):
+    def __init__(self, distance):
+        super(ProximitySensob, self).__init__(Ultrasonic())
+        self.distance = distance
+
+    def get_value(self):
+        if self.sensor.get_value() <= self.distance:
+            return True
+        return False
