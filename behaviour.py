@@ -93,6 +93,8 @@ class GoalBehaviour(Behaviour):
         match = self.sensobs[1].get_value()
         if max(match) < self.threshold:
             self.match_degree = 0
+        elif dist <= self.goal and match[1] >= self.goal_threshold:
+            self.halt_request = True
         elif match[0] - match[1] > 0.05:
             self.match_degree = match[0]
             self.motor_recommendation = ('l', 10 * (dist / self.trigger))
