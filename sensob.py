@@ -60,13 +60,25 @@ class ColorSensob(Sensob):
     def get_value(self):
         # TODO: Support white/black
         imager = Imager.map_color_wta(self.sensor.get_value())
-        matches = 0
-        for x in range(imager.xmax):
+        left = 0
+        middle = 0
+        right = 0
+        for x in range(int(imager.xmax * 0.4)):
             for y in range(imager.ymax):
                 if imager.get_pixel(x, y) == self.color:
-                    matches += 1
-        percentile = matches / (imager.xmax * imager.ymax)  # Normalize
-        return percentile
+                    left += 1
+        for x in range(int(imager.xmax * 0.4), int(imager.xmax * 0.6)):
+            for y in range(imager.ymax):
+                if imager.get_pixel(x, y) == self.color:
+                    middle += 1
+        for x in range(int(imager.xmax * 0.6), imager.xmax):
+            for y in range(imager.ymax):
+                if imager.get_pixel(x, y) == self.color:
+                    right += 1
+        left /= (imager.xmax * imager.ymax) * 0.4  # Normalize
+        middle /= (imager.xmax * imager.ymax) * 0.2  # Normalize
+        right /= (imager.xmax * imager.ymax) * 0.4  # Normalize
+        return left, middle, right
 
 
 class ProximitySensob(Sensob):
