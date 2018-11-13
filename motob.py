@@ -21,7 +21,7 @@ class Motob:
         elif t == 's':
             self.motors.stop()
         else:
-            raise ValueError("Command type invalid.")
+            raise ValueError("Command type invalid. {}".format(self.value))
 
     def traverse(self):
         dur = self.value[1] / 90 if self.value[1] else None
@@ -36,14 +36,14 @@ class Motob:
         if t[1] == 'b':
             s = -s
         if t[0] == 'l':
-            self.motors.set_value((s/5, s))
+            self.motors.set_value((s/5, s), 0.5)
         else:  # r
-            self.motors.set_value((s, s/5))
+            self.motors.set_value((s, s/5), 0.5)
 
     def drive(self):
         t = self.value[0]
         s = self.value[1]
         if t == 'b':
-            self.motors.backward(s)
+            self.motors.backward(s, 0.5)
         else:
-            self.motors.forward(s)
+            self.motors.forward(s, 0.5)

@@ -9,6 +9,7 @@ class Motors():
         self.setup()
 
     def setup(self):
+        wp.wiringPiSetupGpio()
         self.max = 1024
         self.high = 500
         self.normal = 300

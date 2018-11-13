@@ -35,13 +35,16 @@ class LineSensob(Sensob):
         min_, max_ = None, None
         val = self.sensor.get_value()
         for i, v in enumerate(val):
+            print(v)
             if min_ is None:
-                if v >= 0.5:
+                if v <= 0.5:
                     min_ = i
             else:
-                if v <= 0:
-                    max_ = i
+                if v >= 0.5:
                     break
+                max_ = i
+        if min_ is not None and max_ is None:
+            max_ = self.sensor_count - 1
         return min_, max_
 
 
@@ -54,13 +57,13 @@ class ColorSensob(Sensob):
 
     def set_color(self, color):
         try:
-            self.color = self.imager.get_color_rgb(color)
+            self.color = Imager().get_color_rgb(color)
         except KeyError as ex:
             raise ValueError("Invalid color name") from ex
 
     def get_value(self):
         # TODO: Support white/black
-        imager = Imager.map_color_wta(self.sensor.get_value())
+        imager = Imager(image=self.sensor.get_value()).map_color_wta()
         left = 0
         middle = 0
         right = 0

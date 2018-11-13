@@ -1,9 +1,6 @@
 from random import choice, randint
 import time
 
-from bbcon import BBCON
-
-
 class Behaviour:
     def __init__(self, priority):
         self.controller = None
@@ -62,7 +59,7 @@ class CrashPreventionBehaviour(Behaviour):
             self.match_degree = 0.
         else:
             self.match_degree = (self.far - dist) / self.far * 2
-        self.motor_recommendation = (choice('l', 'r'), 90)
+        self.motor_recommendation = (choice(('l', 'r')), 90)
 
 
 class GoalBehaviour(Behaviour):
@@ -78,12 +75,14 @@ class GoalBehaviour(Behaviour):
     # Keep proximity sensor active, but save time by disabling the camera
     def consider_activation(self):
         if self.sensobs[0].get_value() < self.trigger:
+            print("Activating camera: {}".format(self.sensobs[0].get_value()))
             self.active = True
             self.sensobs.append(self.deactivated_sensobs.pop())
             self.controller.activate(self)
 
     def consider_deactivation(self):
         if self.sensobs[0].get_value() > self.trigger:
+            print("Deactivating camera")
             self.active = False
             self.deactivated_sensobs.append(self.sensobs.pop())
             self.controller.deactivate(self)
@@ -123,25 +122,25 @@ class LineBehaviour(Behaviour):
 
     def sense_and_act(self):
         vals = self.sensobs[0].get_value()
-        if vals is not None:
+        if vals != (None, None):
             min_ = vals[0]
             max_ = vals[1]
             max_diff = self.sensobs[0].sensor_count - 1 - max_
             self.match_degree = 1
-            if self.followed_time and self.followed_time - time.time() > 15:  # Avoid circles/loops
+            if self.followed_time and time.time() - self.followed_time > 15:  # Avoid circles/loops
                 if min_ > max_diff:
-                    self.motor_recommendation = ('lf', 0.6)
+                    self.motor_recommendation = ('lf', 0.3)
                 else:
-                    self.motor_recommendation = ('rf', 0.6)
+                    self.motor_recommendation = ('rf', 0.3)
             else:
                 if not self.followed_time:
                     self.followed_time = time.time()
                 if min_ == 0 and max_ == 6:
-                    self.motor_recommendation = (choice('r', 'l'), 90)
+                    self.motor_recommendation = (choice(('r', 'l')), 90)
                 elif min_ > max_diff:
-                    self.motor_recommendation = ('l', 5 * (max_diff - min_))
+                    self.motor_recommendation = ('l', 5 * (max_diff + 1))
                 elif max_diff > min_:
-                    self.motor_recommendation = ('r', 5 * (min_ - max_diff))
+                    self.motor_recommendation = ('r', 5 * (min_ + 1))
                 else:
                     self.motor_recommendation = ('f', 0.3)
         else:
@@ -156,12 +155,12 @@ class ExploreBehaviour(Behaviour):
 
     def consider_activation(self):
         self.active = True
-        self.controller.activate()
+        self.controller.activate(self)
 
     # This has no sensors. No reason to disable.
     def consider_deactivation(self):
         pass
 
     def sense_and_act(self):
-        actions = ((choice('l', 'r'), randint(1, 90)), (choice('lf', 'lr', 'bf', 'br'), 0.5), (choice('f', 'b'), 0.5))
+        actions = ((choice(('l', 'r')), randint(1, 90)), (choice(('lf', 'rf', 'lb', 'rb')), 0.5), (choice(('f', 'b')), 0.3))
         self.motor_recommendation = choice(actions)
