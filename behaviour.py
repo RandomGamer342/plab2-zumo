@@ -135,12 +135,12 @@ class LineBehaviour(Behaviour):
             else:
                 if not self.followed_time:
                     self.followed_time = time.time()
-                if min_ == 0 and max_ == 6:
+                if min_ == 0 and max_ == 5:
                     self.motor_recommendation = (choice(('r', 'l')), 90)
-                elif min_ > max_diff:
-                    self.motor_recommendation = ('l', 5 * (max_diff + 1))
-                elif max_diff > min_:
-                    self.motor_recommendation = ('r', 5 * (min_ + 1))
+                elif min_ < 2:
+                    self.motor_recommendation = ('l', 10)
+                elif max_diff < 2:
+                    self.motor_recommendation = ('r', 10)
                 else:
                     self.motor_recommendation = ('f', 0.3)
         else:
