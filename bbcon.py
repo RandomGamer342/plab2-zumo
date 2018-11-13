@@ -58,6 +58,7 @@ class BBCON:
 if __name__ == '__main__':
     arbitrator = Arbitrator()
     bbcon = BBCON(arbitrator=arbitrator)
+    ZumoButton().wait_for_press()  # Start calibration after first button press
     line_sensob = LineSensob()
     proximity_sensob = ProximitySensob()
     color_sensob = ColorSensob('green')
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     bbcon.add_behaviour(GoalBehaviour(proximity=proximity_sensob, color=color_sensob))
     bbcon.add_behaviour(LineBehaviour(line=line_sensob))
     bbcon.add_behaviour(ExploreBehaviour())
-    ZumoButton().wait_for_press()
+    ZumoButton().wait_for_press()  # Start acting after second button press
     while True:
         if bbcon.run_one_timestep():
             break
