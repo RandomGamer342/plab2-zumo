@@ -23,9 +23,10 @@ class Sensob:
 class LineSensob(Sensob):
     def __init__(self):
         super(LineSensob, self).__init__(ReflectanceSensors(auto_calibrate=True))
+        self.sensor_count = 6
 
     def update(self):
-        if self.sensor.get_value() == [-1.0]*6:
+        if self.sensor.get_value() == [-1.0] * self.sensor_count:
             self.sensor.update()
         return self.get_value()
 
