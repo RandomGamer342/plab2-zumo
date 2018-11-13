@@ -66,10 +66,10 @@ class CrashPreventionBehaviour(Behaviour):
 
 
 class GoalBehaviour(Behaviour):
-    def __init__(self, proximity, camera, *args, **kwargs):
+    def __init__(self, proximity, color, *args, **kwargs):
         super(GoalBehaviour, self).__init__(*args, **kwargs)
         self.sensobs.append(proximity)
-        self.deactivated_sensobs.append(camera)
+        self.deactivated_sensobs.append(color)
         self.trigger = 10
         self.goal = 2
         self.threshold = 0.2

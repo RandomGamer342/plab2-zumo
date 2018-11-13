@@ -18,6 +18,8 @@ class Motob:
             self.turn()
         elif t in ('f', 'b'):
             self.drive()
+        elif t == 's':
+            self.motors.stop()
         else:
             raise ValueError("Command type invalid.")
 
