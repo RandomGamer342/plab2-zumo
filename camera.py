@@ -1,16 +1,21 @@
-import os
+#!/usr/bin/env python3
 from PIL import Image
+from io import BytesIO
+import shlex
+import subprocess
 
 
 class Camera():
-
     def __init__(self, img_width=128, img_height=96, img_rot=0):
         self.value = None
         self.img_width = img_width
         self.img_height = img_height
         self.img_rot = img_rot
 
-    def get_value(self):  return self.value
+    def get_value(self):
+        if not self.value:
+            return self.update()
+        return self.value
 
     def update(self):
         self.sensor_get_value()
@@ -20,12 +25,21 @@ class Camera():
         self.value = None
 
     def sensor_get_value(self):
-        # This is a OS call that takes a image and makes it accessible to PIL operations in the same directory
-        os.system('raspistill -t 1 -o image.png -w "' + str(self.img_width) + '" -h "' + str(self.img_height) + '" -rot "' + str(self.img_rot) + '"')
+        # use raspicam to take an image, with JPG output stored as bytes
+        image = subprocess.Popen(
+            shlex.split("raspistill -t 1 -o - ") + list(map(str,[
+                "-w", self.img_width,
+                "-h", self.img_height,
+                "-rot", self.img_rot,
+            ])),
+            stdout=subprocess.PIPE,
+        ).communicate()[0]
+        
         # Open the image just taken by raspicam
-        # Stores the RGB array in the value field
-        self.value = Image.open('image.png').convert('RGB')
+        self.value = Image.open(BytesIO(image)).convert('RGB')
+    
+    def show(self): # debug
+        self.get_value().show() # fim, vx or imagemagic must be installed. x forwarding preferred
 
-# Just testing the camera in python
-
-# os.system('raspistill -t 1 -o image.png -w "' + str(200) + '" -h "' + str(200) + '" -rot "' + str(0) + '"')
+if __name__ == "__main__":
+    c = Camera().update().show()
